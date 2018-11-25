@@ -1,344 +1,199 @@
-BME280 Sensor Driver
-====================
-.. image:: https://travis-ci.org/rm-hull/bme280.svg?branch=master
-   :target: https://travis-ci.org/rm-hull/bme280
 
-.. image:: https://coveralls.io/repos/github/rm-hull/bme280/badge.svg?branch=master
-   :target: https://coveralls.io/github/rm-hull/bme280?branch=master
-
-.. image:: https://img.shields.io/pypi/pyversions/rpi-bme280.svg
-   :target: https://pypi.python.org/pypi/rpi-bme280
-
-.. image:: https://img.shields.io/pypi/v/rpi-bme280.svg
-   :target: https://pypi.python.org/pypi/rpi-bme280
-
-.. image:: https://img.shields.io/maintenance/yes/2018.svg?maxAge=2592000
-
-
-Interfacing a Bosch BME280 digital sensor module (capable of sensing
+      
+  <div id="readme" class="readme blob instapaper_body">
+    <article class="markdown-body entry-content" itemprop="text"><h1><a id="user-content-bme280-sensor-driver" class="anchor" aria-hidden="true" href="#bme280-sensor-driver"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>BME280 Sensor Driver</h1>
+<a href="https://travis-ci.org/rm-hull/bme280" rel="nofollow"><img alt="https://travis-ci.org/rm-hull/bme280.svg?branch=master" src="https://camo.githubusercontent.com/49993cd818e08d38f58dacd5457cca356d196cb2/68747470733a2f2f7472617669732d63692e6f72672f726d2d68756c6c2f626d653238302e7376673f6272616e63683d6d6173746572" data-canonical-src="https://travis-ci.org/rm-hull/bme280.svg?branch=master" style="max-width:100%;"></a>
+<a href="https://coveralls.io/github/rm-hull/bme280?branch=master" rel="nofollow"><img alt="https://coveralls.io/repos/github/rm-hull/bme280/badge.svg?branch=master" src="https://camo.githubusercontent.com/1cfa792a2e5211362d15e4df11b8aaf8920ab66d/68747470733a2f2f636f766572616c6c732e696f2f7265706f732f6769746875622f726d2d68756c6c2f626d653238302f62616467652e7376673f6272616e63683d6d6173746572" data-canonical-src="https://coveralls.io/repos/github/rm-hull/bme280/badge.svg?branch=master" style="max-width:100%;"></a>
+<a href="https://pypi.python.org/pypi/rpi-bme280" rel="nofollow"><img src="https://camo.githubusercontent.com/ec7c78cae069a697093e74b65eec136e61417426/68747470733a2f2f696d672e736869656c64732e696f2f707970692f707976657273696f6e732f7270692d626d653238302e737667" data-canonical-src="https://img.shields.io/pypi/pyversions/rpi-bme280.svg" style="max-width:100%;">
+</a>
+<a href="https://pypi.python.org/pypi/rpi-bme280" rel="nofollow"><img src="https://camo.githubusercontent.com/1bb8445c122122fc8e03103de9371f2c7659f459/68747470733a2f2f696d672e736869656c64732e696f2f707970692f762f7270692d626d653238302e737667" data-canonical-src="https://img.shields.io/pypi/v/rpi-bme280.svg" style="max-width:100%;">
+</a>
+<p><a target="_blank" rel="noopener noreferrer" href="https://camo.githubusercontent.com/dc889d2da526de91b68763154da8439e83368426/68747470733a2f2f696d672e736869656c64732e696f2f6d61696e74656e616e63652f7965732f323031382e7376673f6d61784167653d32353932303030"><img alt="https://img.shields.io/maintenance/yes/2018.svg?maxAge=2592000" src="https://camo.githubusercontent.com/dc889d2da526de91b68763154da8439e83368426/68747470733a2f2f696d672e736869656c64732e696f2f6d61696e74656e616e63652f7965732f323031382e7376673f6d61784167653d32353932303030" data-canonical-src="https://img.shields.io/maintenance/yes/2018.svg?maxAge=2592000" style="max-width:100%;"></a></p>
+<p>Interfacing a Bosch BME280 digital sensor module (capable of sensing
 temperature, humidity and pressure) in Python 2 or 3 using I2C on the Raspberry
-Pi. The particular kit I bought can be acquired for a few pounds from `eBay
-<http://www.ebay.co.uk/itm/311728184519>`_. Further technical details for the
-BME280 sensor can be found in the `datasheet
-<https://raw.githubusercontent.com/rm-hull/bme280/master/doc/tech-spec/BME280.pdf>`_
-[PDF].
-
-.. image:: https://raw.githubusercontent.com/rm-hull/bme280/master/doc/bme280-sensor.jpg
-   :alt: mounted
-
-GPIO pin-outs
--------------
-The BME280 is an I2C device, so connecting to the RPi is very straightforward:
-
-P1 Header
-^^^^^^^^^
-For prototyping, the P1 header pins should be connected as follows:
-
-========== ====== ============ ======== ==============
-Board Pin  Name   Remarks      RPi Pin  RPi Function  
-========== ====== ============ ======== ==============
-1          VIN    +3.3V Power  P01-1    3V3           
-2          GND    Ground       P01-6    GND           
-3          SCL    Clock        P01-5    GPIO 3 (SCL)  
-4          SDA    Data         P01-3    GPIO 2 (SDA)  
-========== ====== ============ ======== ==============
-
-Pre-requisites
---------------
-Ensure that the I2C kernel driver is enabled::
-
-  $ dmesg | grep i2c
-  [    4.925554] bcm2708_i2c 20804000.i2c: BSC1 Controller at 0x20804000 (irq 79) (baudrate 100000)
-  [    4.929325] i2c /dev entries driver
-
-or::
-
-  $ lsmod | grep i2c
-  i2c_dev                 5769  0
-  i2c_bcm2708             4943  0
-  regmap_i2c              1661  3 snd_soc_pcm512x,snd_soc_wm8804,snd_soc_core
-
-If you have no kernel modules listed and nothing is showing using ``dmesg`` then this implies
-the kernel I2C driver is not loaded. Enable the I2C as follows:
-
-#. Run ``sudo raspi-config``
-#. Use the down arrow to select ``9 Advanced Options``
-#. Arrow down to ``A7 I2C``
-#. Select **yes** when it asks you to enable I2C
-#. Also select **yes** when it asks about automatically loading the kernel module
-#. Use the right arrow to select the **<Finish>** button
-#. Select **yes** when it asks to reboot
-
-After rebooting re-check that the ``dmesg | grep i2c`` command shows whether
-I2C driver is loaded before proceeding.
-
-Optionally, to improve permformance, increase the I2C baudrate from the default
-of 100KHz to 400KHz by altering ``/boot/config.txt`` to include::
-
-  dtparam=i2c_arm=on,i2c_baudrate=400000
-
-Then reboot.
-
-Then add your user to the i2c group::
-
-  $ sudo adduser pi i2c
-
-Install some packages::
-
-  $ sudo apt-get install i2c-tools python-pip
-
-Next check that the device is communicating properly (if using a rev.1 board,
-use 0 for the bus not 1)::
-
-  $ i2cdetect -y 1
-         0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-    00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-    10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    70: -- -- -- -- -- -- 76 --
-
-Installing the Python Package
------------------------------
-For python2, from the bash prompt, enter::
-
-  $ sudo python setup.py install
-
-This will install the Python files in ``/usr/local/lib/python2.7``
-making them ready for use in other programs.
-
-Alternatively for python3, type::
-
- $ sudo python3 setup.py install
-
-Cheeseshop install
-^^^^^^^^^^^^^^^^^^
-Alternatively, a version on PyPi is available, just do::
-
-  $ sudo pip install RPi.bme280
-
-Software Driver - Example Usage
--------------------------------
-Once installed, confirm the I2C address (see prerequisites, it will most 
-likely be 0x76 or 0x77) and port.
-
-Then in a python script or REPL:
-
-.. code:: python
-
-  import smbus2
-  import bme280
-
-  port = 1
-  address = 0x76
-  bus = smbus2.SMBus(port)
-
-  calibration_params = bme280.load_calibration_params(bus, address)
-
-  # the sample method will take a single reading and return a
-  # compensated_reading object
-  data = bme280.sample(bus, address, calibration_params)
-
-  # the compensated_reading class has the following attributes
-  print(data.id)
-  print(data.timestamp)
-  print(data.temperature)
-  print(data.pressure)
-  print(data.humidity)
-
-  # there is a handy string representation too
-  print(data)
-
-This then should print something like::
-
-  ee50df9c-3aa3-4772-8767-73b6bb74f30f
-  2016-11-18 17:33:28.937863
-  20.563
-  980.91
-  48.41
-  compensated_reading(id=ee50df9c-3aa3-4772-8767-73b6bb74f30f, 
-      timestamp=2016-11-18 17:33:28.937863, temp=20.563 °C, 
-      pressure=980.91 hPa, humidity=48.41 % rH)
-
-For a data-logger like application, periodically call ``bme2.sample(bus, address, calibration_params)`` to
-get time-based readings.
-
-See the `weatherstation project <https://github.com/rm-hull/weatherstation>`_ for
-a more complete example usage.
-
-References
-----------
-> TODO
-
-------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-# Raspberry-Pi-3-BME280
-
-This are sample simple programs that help you test your bme280 sensor   Temp / Press / Humi  (very similar to BMP280)
-
-These examples are for I2C type conncetions   
-
-Pi 3V3 to sensor VIN
-Pi GND to sensor GND
-Pi SCL to sensor SCK
-Pi SDA to sensor SDI
-
-
-#temperature formulas 
-degrees        =   sensor.read_temperature()
-degrees        =   (degrees * 1.8) + 32
-degrees2       =   sensor.read_temperature()
-degrees2       =   degrees2
-#pressure formulas
-pascal         =   sensor.read_pressure()
-inchesHG       =   (pascal /3386.39)
-mbar           =   (inchesHG * 33.8639)
-humidity       =   sensor.read_humidity()
-
-
-
-Introduction
-============
-
-.. image:: https://readthedocs.org/projects/adafruit-circuitpython-bme280/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/bme280/en/latest/
-    :alt: Documentation Status
-
-.. image :: https://img.shields.io/discord/327254708534116352.svg
-    :target: https://discord.gg/nBQh6qu
-    :alt: Discord
-
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_BME280.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_BME280
-    :alt: Build Status
-
-I2C and SPI driver for the Bosch BME280 Temperature, Humidity, and Barometric Pressure sensor
-
-Installation and Dependencies
-=============================
-
-This driver depends on:
-
-* `Adafruit CircuitPython <https://github.com/adafruit/circuitpython>`_
-* `Bus Device <https://github.com/adafruit/Adafruit_CircuitPython_BusDevice>`_
-
-Please ensure that the driver and all dependencies are available on the
-CircuitPython filesystem.  This can be most easily achieved by downloading and
-installing the latest
-`Adafruit library and driver bundle <https://github.com/adafruit/Adafruit_CircuitPython_Bundle>`_
-on your device.
-
-Installing from PyPI
---------------------
-
-On the Raspberry Pi, you can install the driver locally
-`from PyPI <https://pypi.org/project/adafruit-circuitpython-bme280/>`_.  To
-install system-wide, use:
-
-.. code-block:: shell
-
-    sudo pip3 install adafruit-circuitpython-bme280
-
-To install in a virtual environment in your current project:
-
-.. code-block:: shell
-
-    mkdir project-name && cd project-name
-    python3 -m venv .env
-    source .env/bin/activate
-    pip3 install adafruit-circuitpython-bme280
-
-Usage Example
-=============
-
-.. code-block:: python
-
-    import board
-    import digitalio
-    import busio
-    import time
-    import adafruit_bme280
-
-    # Create library object using our Bus I2C port
-    i2c = busio.I2C(board.SCL, board.SDA)
-    bme280 = adafruit_bme280.Adafruit_BME280_I2C(i2c)
-
-    # OR create library object using our Bus SPI port
-    #spi = busio.SPI(board.SCK, board.MOSI, board.MISO)
-    #bme_cs = digitalio.DigitalInOut(board.D10)
-    #bme280 = adafruit_bme280.Adafruit_BME280_SPI(spi, bme_cs)
-
-    # change this to match the location's pressure (hPa) at sea level
-    bme280.sea_level_pressure = 1013.25
-
-    while True:
-        print("\nTemperature: %0.1f C" % bme280.temperature)
-        print("Humidity: %0.1f %%" % bme280.humidity)
-        print("Pressure: %0.1f hPa" % bme280.pressure)
-        print("Altitude = %0.2f meters" % bme280.altitude)
-        time.sleep(2)
-
-Contributing
-============
-
-Contributions are welcome! Please read our `Code of Conduct
-<https://github.com/adafruit/Adafruit_CircuitPython_BME280/blob/master/CODE_OF_CONDUCT.md>`_
-before contributing to help this project stay welcoming.
-
-Building Locally
-================
-
-To build this library locally you'll need to install the
-`circuitpython-build-tools <https://github.com/adafruit/circuitpython-build-tools>`_ package.
-
-.. code-block:: shell
-
-    python3 -m venv .env
-    source .env/bin/activate
-    pip3 install circuitpython-build-tools
-
-Once installed, make sure you are in the virtual environment:
-
-.. code-block:: shell
-
-    source .env/bin/activate
-
-Then run the build:
-
-.. code-block:: shell
-
-    circuitpython-build-bundles --filename_prefix adafruit-circuitpython-veml6070 --library_location .
-
-Sphinx Documentation
---------------------
-
-Sphinx is used to build the documentation based on rST files and comments in the code. First,
-install dependencies (feel free to reuse the virtual environment from above):
-
-.. code-block:: shell
-
-    python3 -m venv .env
-    source .env/bin/activate
-    pip3 install Sphinx sphinx-rtd-theme
-
-Now, once you have the virtual environment activated:
-
-.. code-block:: shell
-
-    cd docs
-    sphinx-build -E -W -b html . _build/html
-
-This will output the documentation to ``docs/_build/html``. Open the index.html in your browser to
-view them. It will also (due to -W) error out on any warning like Travis will. This is a good way to
-locally verify it will pass.
+Pi. The particular kit I bought can be acquired for a few pounds from <a href="http://www.ebay.co.uk/itm/311728184519" rel="nofollow">eBay</a>. Further technical details for the
+BME280 sensor can be found in the <a href="https://raw.githubusercontent.com/rm-hull/bme280/master/doc/tech-spec/BME280.pdf" rel="nofollow">datasheet</a>
+[PDF].</p>
+<p><a target="_blank" rel="noopener noreferrer" href="https://raw.githubusercontent.com/rm-hull/bme280/master/doc/bme280-sensor.jpg"><img alt="mounted" src="https://raw.githubusercontent.com/rm-hull/bme280/master/doc/bme280-sensor.jpg" style="max-width:100%;"></a></p>
+<a name="user-content-gpio-pin-outs"></a>
+<h2><a id="user-content-gpio-pin-outs" class="anchor" aria-hidden="true" href="#gpio-pin-outs"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>GPIO pin-outs</h2>
+<p>The BME280 is an I2C device, so connecting to the RPi is very straightforward:</p>
+<a name="user-content-p1-header"></a>
+<h3><a id="user-content-p1-header" class="anchor" aria-hidden="true" href="#p1-header"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>P1 Header</h3>
+<p>For prototyping, the P1 header pins should be connected as follows:</p>
+<table>
+
+
+
+
+
+
+
+<thead valign="bottom">
+<tr><th>Board Pin</th>
+<th>Name</th>
+<th>Remarks</th>
+<th>RPi Pin</th>
+<th>RPi Function</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr><td>1</td>
+<td>VIN</td>
+<td>+3.3V Power</td>
+<td>P01-1</td>
+<td>3V3</td>
+</tr>
+<tr><td>2</td>
+<td>GND</td>
+<td>Ground</td>
+<td>P01-6</td>
+<td>GND</td>
+</tr>
+<tr><td>3</td>
+<td>SCL</td>
+<td>Clock</td>
+<td>P01-5</td>
+<td>GPIO 3 (SCL)</td>
+</tr>
+<tr><td>4</td>
+<td>SDA</td>
+<td>Data</td>
+<td>P01-3</td>
+<td>GPIO 2 (SDA)</td>
+</tr>
+</tbody>
+</table>
+<a name="user-content-pre-requisites"></a>
+<h2><a id="user-content-pre-requisites" class="anchor" aria-hidden="true" href="#pre-requisites"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Pre-requisites</h2>
+<p>Ensure that the I2C kernel driver is enabled:</p>
+<pre>$ dmesg | grep i2c
+[    4.925554] bcm2708_i2c 20804000.i2c: BSC1 Controller at 0x20804000 (irq 79) (baudrate 100000)
+[    4.929325] i2c /dev entries driver
+</pre>
+<p>or:</p>
+<pre>$ lsmod | grep i2c
+i2c_dev                 5769  0
+i2c_bcm2708             4943  0
+regmap_i2c              1661  3 snd_soc_pcm512x,snd_soc_wm8804,snd_soc_core
+</pre>
+<p>If you have no kernel modules listed and nothing is showing using <code>dmesg</code> then this implies
+the kernel I2C driver is not loaded. Enable the I2C as follows:</p>
+<ol>
+<li>Run <code>sudo raspi-config</code></li>
+<li>Use the down arrow to select <code>9 Advanced Options</code></li>
+<li>Arrow down to <code>A7 I2C</code></li>
+<li>Select <strong>yes</strong> when it asks you to enable I2C</li>
+<li>Also select <strong>yes</strong> when it asks about automatically loading the kernel module</li>
+<li>Use the right arrow to select the <strong>&lt;Finish&gt;</strong> button</li>
+<li>Select <strong>yes</strong> when it asks to reboot</li>
+</ol>
+<p>After rebooting re-check that the <code>dmesg | grep i2c</code> command shows whether
+I2C driver is loaded before proceeding.</p>
+<p>Optionally, to improve permformance, increase the I2C baudrate from the default
+of 100KHz to 400KHz by altering <code>/boot/config.txt</code> to include:</p>
+<pre>dtparam=i2c_arm=on,i2c_baudrate=400000
+</pre>
+<p>Then reboot.</p>
+<p>Then add your user to the i2c group:</p>
+<pre>$ sudo adduser pi i2c
+</pre>
+<p>Install some packages:</p>
+<pre>$ sudo apt-get install i2c-tools python-pip
+</pre>
+<p>Next check that the device is communicating properly (if using a rev.1 board,
+use 0 for the bus not 1):</p>
+<pre>$ i2cdetect -y 1
+       0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+  00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+  10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  70: -- -- -- -- -- -- 76 --
+</pre>
+<a name="user-content-installing-the-python-package"></a>
+<h2><a id="user-content-installing-the-python-package" class="anchor" aria-hidden="true" href="#installing-the-python-package"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Installing the Python Package</h2>
+<p>For python2, from the bash prompt, enter:</p>
+<pre>$ sudo python setup.py install
+</pre>
+<p>This will install the Python files in <code>/usr/local/lib/python2.7</code>
+making them ready for use in other programs.</p>
+<p>Alternatively for python3, type:</p>
+<pre>$ sudo python3 setup.py install
+</pre>
+<a name="user-content-cheeseshop-install"></a>
+<h3><a id="user-content-cheeseshop-install" class="anchor" aria-hidden="true" href="#cheeseshop-install"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Cheeseshop install</h3>
+<p>Alternatively, a version on PyPi is available, just do:</p>
+<pre>$ sudo pip install RPi.bme280
+</pre>
+<a name="user-content-software-driver-example-usage"></a>
+<h2><a id="user-content-software-driver---example-usage" class="anchor" aria-hidden="true" href="#software-driver---example-usage"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Software Driver - Example Usage</h2>
+<p>Once installed, confirm the I2C address (see prerequisites, it will most
+likely be 0x76 or 0x77) and port.</p>
+<p>Then in a python script or REPL:</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">import</span> smbus2
+<span class="pl-k">import</span> bme280
+
+port <span class="pl-k">=</span> <span class="pl-c1">1</span>
+address <span class="pl-k">=</span> <span class="pl-c1"><span class="pl-k">0x</span>76</span>
+bus <span class="pl-k">=</span> smbus2.SMBus(port)
+
+calibration_params <span class="pl-k">=</span> bme280.load_calibration_params(bus, address)
+
+<span class="pl-c"><span class="pl-c">#</span> the sample method will take a single reading and return a</span>
+<span class="pl-c"><span class="pl-c">#</span> compensated_reading object</span>
+data <span class="pl-k">=</span> bme280.sample(bus, address, calibration_params)
+
+<span class="pl-c"><span class="pl-c">#</span> the compensated_reading class has the following attributes</span>
+<span class="pl-c1">print</span>(data.id)
+<span class="pl-c1">print</span>(data.timestamp)
+<span class="pl-c1">print</span>(data.temperature)
+<span class="pl-c1">print</span>(data.pressure)
+<span class="pl-c1">print</span>(data.humidity)
+
+<span class="pl-c"><span class="pl-c">#</span> there is a handy string representation too</span>
+<span class="pl-c1">print</span>(data)</pre></div>
+<p>This then should print something like:</p>
+<pre>ee50df9c-3aa3-4772-8767-73b6bb74f30f
+2016-11-18 17:33:28.937863
+20.563
+980.91
+48.41
+compensated_reading(id=ee50df9c-3aa3-4772-8767-73b6bb74f30f,
+    timestamp=2016-11-18 17:33:28.937863, temp=20.563 °C,
+    pressure=980.91 hPa, humidity=48.41 % rH)
+</pre>
+<p>For a data-logger like application, periodically call <code>bme2.sample(bus, address, calibration_params)</code> to
+get time-based readings.</p>
+<p>See the <a href="https://github.com/rm-hull/weatherstation">weatherstation project</a> for
+a more complete example usage.</p>
+<a name="user-content-references"></a>
+<h2><a id="user-content-references" class="anchor" aria-hidden="true" href="#references"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>References</h2>
+<p>&gt; TODO</p>
+<a name="user-content-license"></a>
+<h2><a id="user-content-license" class="anchor" aria-hidden="true" href="#license"><svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>License</h2>
+<p>The MIT License (MIT)</p>
+<p>Copyright (c) 2016 Richard Hull</p>
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:</p>
+<p>The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.</p>
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</p>
+
+</article>
+  </div>
+
+    </div>
