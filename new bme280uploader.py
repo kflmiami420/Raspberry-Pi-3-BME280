@@ -142,3 +142,85 @@ print "Temperature in Celsius : %.2f C" %cTemp
 print "Temperature in Fahrenheit : %.2f F" %fTemp
 print "Pressure : %.2f hPa " %pressure
 print "Relative Humidity : %.2f %%" %humidity
+
+import requests
+from Adafruit_BME280 import *
+from datetime import datetime
+
+station_ID = "kflmiami444"
+station_KEY = "7xpgwxm2"
+log_file = "/tmp/wxlog.txt"
+base_URL = "https://weatherstation.wunderground.com/weatherstation/updateweatherstation.php"
+software_type = "WU_Upload-v" + version
+print("Reading sensor...")
+# Init sensor
+b1 = BME280(mode=BME280_OSAMPLE_8)
+# Read data from sensor
+b1_temp = sensor.read_temperature_f()
+b1_humd = sensor.read_humidity()
+b1_baro = sensor.read_pressure_inches()
+b1_dewp = sensor.read_dewpoint_f()
+
+# Build first half of POST
+post_URL = base_URL+"?ID="+station_ID+"&PASSWORD="+station_KEY+"&dateutc=now"
+# Fill dictionary with variables
+payload = {"tempf": sensor_temp, "humidity": sensor_humd, "baromin": sensor_baro,\
+    "dewptf": sensor_dewp, "softwaretype": software_type, "version": version,\
+    "action": "updateraw"}
+# Open log file for writing
+print("Writing to log file...")
+logfile = open(log_file, 'a')
+
+# Write current time to log
+logfile.write(datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": ")
+
+# Push data, exit on error
+print("Connecting to Weather Underground...")
+try:
+    wu_push = requests.get(post_URL, params=payload, timeout=15)
+except requests.exceptions.Timeout:
+    print("Timeout!")
+    logfile.write("Timeout!\n")
+    logfile.close()
+    exit()
+except requests.exceptions.ConnectionError:
+    print("Network Error!")
+    logfile.write("Network Error!\n")
+    logfile.close()
+    exit()
+except requests.exceptions.RequestException as e:
+    print("Unknown Error!")
+    logfile.write("Unknown Error!\n")
+    logfile.close()
+    exit()
+
+# See if there was a good connection
+if wu_push.status_code != 200:
+    print("Error communicating with server!")
+    logfile.write("Server Error!")
+    logfile.write("\n")
+    logfile.close()
+    exit()
+
+# Check response
+if "success" in wu_push.text:
+    # Print status message and write conditions to log
+    print("Upload OK!")
+    condition_string = str("{:.2f} F".format(sensor_temp))+", "+str("{:.2f}%".format(sensor_humd))+", "+\
+        str("{:.2f} in".format(sensor_baro))
+    logfile.write(condition_string)
+elif "Password" in wu_push.text:
+    print("Station ID or password error!")
+    logfile.write("Authentication Error!")
+else:
+    print("Invalid response!")
+    logfile.write("Unknown Error!")
+
+# Close file and print message
+logfile.write("\n")
+logfile.close()
+print("Done")
+
+# EOF
+
+
