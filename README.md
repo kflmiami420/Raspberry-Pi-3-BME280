@@ -104,6 +104,8 @@ of 100KHz to 400KHz by altering <code>/boot/config.txt</code> to include:</p>
 <p>Next check that the device is communicating properly (if using a rev.1 board,
 use 0 for the bus not 1):</p>
 <pre>$ i2cdetect -y 1
+<p>
+
        0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
   00:          -- -- -- -- -- -- -- -- -- -- -- -- --
   10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
