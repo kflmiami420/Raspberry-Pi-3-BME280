@@ -23,8 +23,8 @@ import adafruit_bme280
 
 from Adafruit_IO import Client, Feed, RequestError
 LOOP_DELAY = 35
-ADAFRUIT_IO_KEY = '0d23b4cab7a04da284d43dc5f90185a6'
-ADAFRUIT_IO_USERNAME = 'kflmiami420'
+ADAFRUIT_IO_KEY = 'launch codes'
+ADAFRUIT_IO_USERNAME = 'wopr'
 aio = Client(ADAFRUIT_IO_USERNAME, ADAFRUIT_IO_KEY)
 
 try: # if we already have the feeds, assign them.
